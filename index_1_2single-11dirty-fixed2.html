@@ -81,7 +81,7 @@
             v: {
               type: 'vector',
               tiles: [
-                'https://k96mz.github.io/20241004CartoTileStylizedfromArcdata/VTstylizedsingle-11dirty-fixed/{z}/{x}/{y}.pbf',
+                'https://k96mz.github.io/20241004CartoTileStylizedfromArcdata/VTstylizedsingle-11dirty-fixed2/{z}/{x}/{y}.pbf',
               ],
               attribution:
                 '<table><tr><td style="font-size: 7pt; line-height: 100%">* Non-Self-Governing Territory<br>The boundaries and names shown and the designations used on this map do not imply official endorsement or acceptance by the United Nations.<br>Final boundary between the Republic of Sudan and the Republic of South Sudan has not yet been determined.<br>Dotted line represents approximately the Line of Control in Jammu and Kashmir agreed upon by India and Pakistan. The final status of Jammu and Kashmir has not yet been agreed upon by the parties.<br>A dispute exists between the Governments of Argentina and the United Kingdom of Great Britain and Northern Ireland concerning sovereignty over the Falkland Islands (Malvinas).</td><td  style="font-size: 5pt; color: #009EDB" valign="bottom">Powered by<br><img src="https://unopengis.github.io/watermark/watermark.png" alt="UN OpenGIS logo" width="50" height="50"></td></tr></table>',
@@ -166,6 +166,17 @@
                 'line-width': 0.8,
               },
             },
+            {
+              id: 'wbya',
+              type: 'fill',
+              source: 'v',
+              'source-layer': 'wbya',
+              maxzoom: 4,
+              minzoom: 0,
+              paint: {
+                'fill-color': ['rgb', 255, 255, 255],
+              },
+            },
           ],
         },
       });
@@ -181,56 +192,74 @@
       map.on('mousemove', 'bnda', function (e) {
         map.getCanvas().style.cursor = 'pointer';
 
-        if (e.features[0].properties.STSCOD == 1) {
-          var html =
-            "<p class='stscod1'>" +
-            e.features[0].properties.LBL_EN.toUpperCase() +
-            '</p>';
+        // wbya ポリゴンが存在するかどうかのチェック
+        const wbyaFeatures = map.queryRenderedFeatures(e.point, {
+          layers: ['wbya'], // wbya ポリゴンが描画されているレイヤー名
+        });
 
-          popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
-        } else if (e.features[0].properties.STSCOD == 2) {
-          var html =
-            "<p class='stscod2'>" +
-            e.features[0].properties.LBL_EN.toUpperCase() +
-            '</p>';
-
-          popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
-        } else if (e.features[0].properties.STSCOD == 3) {
-          if (
-            e.features[0].properties.LBL_EN == 'Falkland Islands (Malvinas) ***'
-          ) {
+        // wbya ポリゴンが存在しない場合のみポップアップを表示
+        if (wbyaFeatures.length === 0) {
+          if (e.features[0].properties.STSCOD == 1) {
             var html =
-              "<p class='stscod3'>" + e.features[0].properties.LBL_EN + '</p>';
-          } else {
-            var html =
-              "<p class='stscod3'>" + e.features[0].properties.LBL_EN + '</p>';
-          }
-
-          popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
-        } else if (e.features[0].properties.STSCOD == 4) {
-          var html =
-            "<p class='stscod4'>" + e.features[0].properties.LBL_EN + '</p>';
-
-          popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
-          // } else if (e.features[0].properties.STSCOD == 5) {
-          //   var html =
-          //     "<p class='stscod5'>" + e.features[0].properties.LBL_EN + '</p>';
-
-          //   popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
-        } else if (e.features[0].properties.STSCOD == 6) {
-          var html =
-            "<p class='stscod6'>" + e.features[0].properties.LBL_EN + '</p>';
-
-          popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
-        } else if (e.features[0].properties.STSCOD == 99) {
-          if (e.features[0].properties.LBL_EN == 'Jammu and Kashmir') {
-            var html =
-              "<p class='stscod6'>" + e.features[0].properties.LBL_EN + '​</p>';
+              "<p class='stscod1'>" +
+              e.features[0].properties.LBL_EN.toUpperCase() +
+              '</p>';
 
             popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
-          } else {
-            popup.remove();
+          } else if (e.features[0].properties.STSCOD == 2) {
+            var html =
+              "<p class='stscod2'>" +
+              e.features[0].properties.LBL_EN.toUpperCase() +
+              '</p>';
+
+            popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
+          } else if (e.features[0].properties.STSCOD == 3) {
+            if (
+              e.features[0].properties.LBL_EN ==
+              'Falkland Islands (Malvinas) ***'
+            ) {
+              var html =
+                "<p class='stscod3'>" +
+                e.features[0].properties.LBL_EN +
+                '</p>';
+            } else {
+              var html =
+                "<p class='stscod3'>" +
+                e.features[0].properties.LBL_EN +
+                '</p>';
+            }
+
+            popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
+          } else if (e.features[0].properties.STSCOD == 4) {
+            var html =
+              "<p class='stscod4'>" + e.features[0].properties.LBL_EN + '</p>';
+
+            popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
+            // } else if (e.features[0].properties.STSCOD == 5) {
+            //   var html =
+            //     "<p class='stscod5'>" + e.features[0].properties.LBL_EN + '</p>';
+
+            //   popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
+          } else if (e.features[0].properties.STSCOD == 6) {
+            var html =
+              "<p class='stscod6'>" + e.features[0].properties.LBL_EN + '</p>';
+
+            popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
+          } else if (e.features[0].properties.STSCOD == 99) {
+            if (e.features[0].properties.LBL_EN == 'Jammu and Kashmir') {
+              var html =
+                "<p class='stscod6'>" +
+                e.features[0].properties.LBL_EN +
+                '​</p>';
+
+              popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
+            } else {
+              popup.remove();
+            }
           }
+        } else {
+          // wbya ポリゴンが存在する場合、ポップアップを表示しない
+          popup.remove();
         }
       });
 
